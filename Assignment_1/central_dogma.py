@@ -65,27 +65,27 @@ def chunk_aa(sequence):
 def translation(codons):
     """Return the protein sequence from a list of codons"""
     genetic_code = {
-        "GCA": "A", "GCC": "A", "GCG": "A", "GCU": "A", #Alanine
-        "AGA": "R", "AGG": "R", "CGA": "R", "CGC": "R", "CGG": "R", "CGU": "R", #Arginine
-        "GAC": "D", "GAU": "D", #Aspartic acid
-        "AAC": "N", "AAU": "N", #Asparagine
-        "UGC": "C", "UGU": "C", #Cysteine
-        "GAA": "E", "GAG": "E", #Glutamic Acid
-        "CAA": "Q", "CAG": "Q", #Glutamine
-        "GGA": "G", "GGC": "G", "GGU": "G", "GGG": "G", ##Glycine
-        "CAC": "H", "CAU": "H", #Histidine
-        "AUA": "I", "AUC": "I", "AUU": "I", #Isoleucine
-        "UUA": "L", "UUG": "L", "CUA": "L", "CUC": "L", "CUG": "L", "CUU": "L", #Leucine
-        "AAA": "K", "AAG": "K", #Lysine
-        "AUG": "M", #Methionine
-        "UUC": "F", "UUU": "F", #Phenylalanine
-        "CCA": "P", "CCC": "P", "CCG": "P", "CCU": "P", # Proline
-        "AGC": "S", "AGU": "S", "UCA": "S", "UCC": "S", "UCG": "S", "UCU": "S", #Serine
-        "ACA": "T", "ACC": "T", "ACG": "T", "ACU": "T", #Threonine
-        "UGG": "W", #Tryptophan
-        "UAC": "Y", "UAU": "Y", #Tyrosine
-        "GUA": "V", "GUC": "V", "GUG": "V", "GUU": "V", #Valine
-        "UAA": "*", "UAG": "*", "UGA": "*" #Termination codon
+        "GCA": "Ala", "GCC": "Ala", "GCG": "Ala", "GCU": "Ala", #Alanine
+        "AGA": "Arg", "AGG": "Arg", "CGA": "Arg", "CGC": "Arg", "CGG": "Arg", "CGU": "Arg", #Arginine
+        "GAC": "Asp", "GAU": "Asp", #Aspartic acid
+        "AAC": "Asn", "AAU": "Asn", #Asparagine
+        "UGC": "Cys", "UGU": "Cys", #Cysteine
+        "GAA": "Glu", "GAG": "Glu", #Glutamic Acid
+        "CAA": "GIn", "CAG": "GIn", #Glutamine
+        "GGA": "Gly", "GGC": "Gly", "GGU": "Gly", "GGG": "Gly", ##Glycine
+        "CAC": "His", "CAU": "His", #Histidine
+        "AUA": "IIe", "AUC": "IIe", "AUU": "IIe", #Isoleucine
+        "UUA": "Leu", "UUG": "Leu", "CUA": "Leu", "CUC": "Leu", "CUG": "Leu", "CUU": "Leu", #Leucine
+        "AAA": "Lys", "AAG": "Lys", #Lysine
+        "AUG": "Met", #Methionine
+        "UUC": "Phe", "UUU": "Phe", #Phenylalanine
+        "CCA": "Pro", "CCC": "Pro", "CCG": "Pro", "CCU": "Pro", # Proline
+        "AGC": "Ser", "AGU": "Ser", "UCA": "Ser", "UCC": "Ser", "UCG": "Ser", "UCU": "Ser", #Serine
+        "ACA": "Thr", "ACC": "Thr", "ACG": "Thr", "ACU": "Thr", #Threonine
+        "UGG": "Trp", #Tryptophan
+        "UAC": "Tyr", "UAU": "Tyr", #Tyrosine
+        "GUA": "Val", "GUC": "Val", "GUG": "Val", "GUU": "Val", #Valine
+        "UAA": "Stop", "UAG": "Stop", "UGA": "Stop" #Termination codon
                   
     }
 
@@ -96,12 +96,12 @@ def translation(codons):
             return "Invalid sequence"
         
         if codon in genetic_code:
-            if genetic_code[codon] == "*":
+            if genetic_code[codon] == "Stop":
                # stop translation
                 break
             protein.append(genetic_code[codon])
     
-    return ''.join(protein)
+    return '-'.join(protein)
 
 
 def dna_to_protein(sequence):
@@ -141,33 +141,34 @@ def find_protein(sequence, strand, frame):
     """Find proteins in a given sequence strand and frame, filtering short proteins."""
     start_codon = "ATG"
     stop_codons = {"TAA", "TAG", "TGA"}
-    proteins = []
+    proteins = {}
     
     seq_length = len(sequence)
+    
     i = frame  # Start at the given frame
 
     while i < seq_length - 2:
-        codon = sequence[i:i+3]
+        codon = sequence[i:i+3] # Loops through the sequence, reading 3 nucleotides at a time
         
-        if codon == start_codon:  # Found a start codon
-            start = i + 1  # 1-based index
+        if codon == start_codon:  # Start translation
+            start = i+1  # store the start index
             protein_seq = []
             
-            for j in range(i, seq_length - 2, 3):
+            for j in range(i, seq_length - 2, 3): # Iterate through the sequence, 3 nu at a time
                 codon = sequence[j:j+3]
                 if codon in stop_codons:  # Stop translation
-                    end = j + 3  # 1-based inclusive index
-                    length = (end - start) // 3
-                    
+                    end = j+3  # store the end index
+                    length = (end - start) // 3 # Calculate protein length
                     if length >= MIN_PROTEIN_LENGTH:  # Filter out short proteins
-                        proteins.append((start, end, length, strand, frame + 1, "".join(protein_seq)))
+                        if end not in proteins or length > proteins[end][2]:
+                            proteins[end]  = (start, end, length, strand, frame+1, ''.join(protein_seq))
                     
                     break  # Move to the next start codon search
                 protein_seq.append(codon)
-        
+
         i += 3  # Move to next codon
 
-    return proteins
+    return list(proteins.values())
 
 
 def six_frame_translation(sequence):
