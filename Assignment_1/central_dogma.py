@@ -115,7 +115,7 @@ def dna_to_protein(sequence):
         print(f"Error: {e}")
         return None  # Return None if invalid
 
-    sequence = check_length(sequence)  # This should still work as intended
+    sequence = check_length(sequence) 
 
     # Complement DNA
     complement_seq = complement(sequence)
