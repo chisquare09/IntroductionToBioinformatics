@@ -71,7 +71,7 @@ retrieve_ncbi_data <- function(ids) {
   return(results)
 }
 
-# Define protein IDs
+# Define gene list
 gene_list <- c("MSH2", "CDKN2A", "HOXB13", "AIP", "CEBPA")
 
 # Retrieve data
