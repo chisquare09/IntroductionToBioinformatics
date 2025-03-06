@@ -35,7 +35,7 @@ retrieve_uniprot_data <- function(ids) {
 }
 
 # Define protein IDs
-id_list <- c("O14654", "O15503", "P01308", "P01344", "P05019")
+id_list <- c("P35568", "O15503", "P01308", "P01344", "P61371")
 
 # Retrieve data
 uniprot_data <- retrieve_uniprot_data(id_list)
