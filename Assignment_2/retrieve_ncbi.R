@@ -1,6 +1,6 @@
 library(rentrez)
 
-# Function to retrieve NICBI data for given protein IDs
+# Function to retrieve NICBI data for given gene list
 retrieve_ncbi_data <- function(ids) {
   # Initialize data frame
   results <- data.frame(gene_symbol=character(),
@@ -72,10 +72,10 @@ retrieve_ncbi_data <- function(ids) {
 }
 
 # Define protein IDs
-id_list <- c("MSH2", "CDKN2A", "HOXB13", "AIP", "CEBPA")
+gene_list <- c("MSH2", "CDKN2A", "HOXB13", "AIP", "CEBPA")
 
 # Retrieve data
-ncbi_data <- retrieve_ncbi_data(id_list)
+ncbi_data <- retrieve_ncbi_data(gene_list)
 
 # Save results
 print(ncbi_data)
