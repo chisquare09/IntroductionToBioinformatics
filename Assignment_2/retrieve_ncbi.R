@@ -8,6 +8,7 @@ retrieve_ncbi_data <- function(ids) {
                         description = character(),
                         length = numeric(),
                         chromosome = character(),
+                        map_location = character(),
                         start = numeric(),
                         end = numeric(),
                         strand = character(),
@@ -31,9 +32,8 @@ retrieve_ncbi_data <- function(ids) {
     # Extract information
     gene_full_name <- ifelse(!is.null(gene_summary$nomenclaturename),gene_summary$nomenclaturename,NA)
     gene_description <- ifelse(!is.null(gene_summary$summary),gene_summary$summary,NA)
-    
-    
     gene_chromosome <-ifelse(!is.null(gene_summary$chromosome),gene_summary$chromosome,NA)
+    gene_location <- ifelse(!is.null(gene_summary$maplocation),gene_summary$maplocation,NA)
     
     gene_start <- 0
     gene_stop <- 0
@@ -57,6 +57,7 @@ retrieve_ncbi_data <- function(ids) {
                                         description = gene_description,
                                         length = gene_length,
                                         chromosome = gene_chromosome,
+                                        map_location = gene_location,
                                         start = gene_start,
                                         end = gene_end,
                                         strand = gene_strand,
@@ -71,7 +72,7 @@ retrieve_ncbi_data <- function(ids) {
 }
 
 # Define protein IDs
-id_list <- c("HRAS", "CDKN2A", "HOXB13", "AIP", "CEBPA")
+id_list <- c("MSH2", "CDKN2A", "HOXB13", "AIP", "CEBPA")
 
 # Retrieve data
 ncbi_data <- retrieve_ncbi_data(id_list)
