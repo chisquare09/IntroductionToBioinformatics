@@ -154,17 +154,27 @@ def find_protein(sequence, strand, frame):
             start = i+1  # store the start index
             protein_seq = []
             
+            found_stop = False
             for j in range(i, seq_length - 2, 3): # Iterate through the sequence, 3 nu at a time
                 codon = sequence[j:j+3]
                 if codon in stop_codons:  # Stop translation
                     end = j+3  # store the end index
                     length = (end - start) // 3 # Calculate protein length
+                    nu_length = (end - start) +1 # Calculate nucleotide length
+                    found_stop = True
                     if length >= MIN_PROTEIN_LENGTH:  # Filter out short proteins
                         if end not in proteins or length > proteins[end][2]:
-                            proteins[end]  = (start, end, length, strand, frame+1, ''.join(protein_seq))
+                            proteins[end]  = (start, end, length,nu_length, strand, frame+1, ''.join(protein_seq))
                     
                     break  # Move to the next start codon search
                 protein_seq.append(codon)
+            if not found_stop:
+                end = ">1"
+                length = (seq_length - start) // 3
+                nu_length = (seq_length - start+1)
+                if length >= MIN_PROTEIN_LENGTH:
+                    if end not in proteins or length > proteins[end][2]:
+                        proteins[end] = (start, end, length,nu_length, strand, frame+1, ''.join(protein_seq))
 
         i += 3  # Move to next codon
 
@@ -191,8 +201,11 @@ def six_frame_translation(sequence):
         
         # Convert start/end to original coordinates
         for i in range(len(rev_protein)):
-            start, end, length, strand, frame, protein = rev_protein[i]
-            rev_protein[i] = (seq_length - end + 1, seq_length - start + 1, length, strand, frame, protein)
+            start, end, length,nu_length, strand, frame, protein = rev_protein[i]
+            if end == ">1":
+                rev_protein[i] = (seq_length - start + 1, end, length,nu_length, strand, frame, protein)
+            else:
+                rev_protein[i] = (seq_length - end + 1, seq_length - start + 1, length,nu_length, strand, frame, protein)
         
         frames.extend(rev_protein)
     
@@ -205,7 +218,7 @@ def report_predicted_proteins(sequence):
     
     # Report proteins in table format
     if proteins:
-        headers = ["Start", "End", "Length (aa)", "Strand", "Frame", "Sequence"]
+        headers = ["Start", "End", "Length (aa)","Nucleotide length(nt)", "Strand", "Frame", "Sequence"]
         print(tabulate(proteins, headers=headers, tablefmt="pretty"))
 
         # Calculate longest and shortest proteins
