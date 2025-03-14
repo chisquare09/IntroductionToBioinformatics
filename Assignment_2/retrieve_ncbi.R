@@ -63,11 +63,11 @@ retrieve_ncbi_data <- function(ids) {
                                         strand = gene_strand,
                                         exon = gene_exon,
                                         stringsAsFactors = FALSE))
-
+    
     
     
   }     
-    
+  
   return(results)
 }
 
