@@ -31,7 +31,8 @@ p0 <- ggplot(res_df, aes(x = log2FoldChange, y = neg_log10_padj)) +
   theme_minimal() +
   labs(title = "Volcano Plot (Before Applying Threshold)",
        x = "Log2 Fold Change", y = "-log10 Adjusted p-value") +
-  geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "black")
+  geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "black") +
+  ylim(0,10)
 
 # first threshold 
 fc_threshold_1 <- log2(2)  # log2(2) = 1 (since 2-fold change is log2FC = ±1)
@@ -55,7 +56,9 @@ p1 <- ggplot(res_df, aes(x = log2FoldChange, y = neg_log10_padj)) +
   labs(title = "Volcano Plot (Fold Change ≥ 2, p-value < 0.05)",
        x = "Log2 Fold Change", y = "-log10 Adjusted p-value") +
   geom_hline(yintercept = -log10(padj_threshold_1), linetype = "dashed", color = "blue") +
-  geom_vline(xintercept = c(-fc_threshold_1, fc_threshold_1), linetype = "dashed", color = "blue")
+  geom_vline(xintercept = c(-fc_threshold_1, fc_threshold_1), linetype = "dashed", color = "blue")+
+  ylim(0,10)
+
 
 fc_threshold_2 <- log2(1.5)  # log2(1.5) ≈ 0.58
 padj_threshold_2 <- 0.01
@@ -77,8 +80,10 @@ p2<-ggplot(res_df, aes(x = log2FoldChange, y = neg_log10_padj)) +
   labs(title = "Volcano Plot (Fold Change ≥ 1.5, padj < 0.01)",
        x = "Log2 Fold Change", y = "-log10 Adjusted p-value") +
   geom_hline(yintercept = -log10(padj_threshold_2), linetype = "dashed", color = "red") +
-  geom_vline(xintercept = c(-fc_threshold_2, fc_threshold_2), linetype = "dashed", color = "red")
+  geom_vline(xintercept = c(-fc_threshold_2, fc_threshold_2), linetype = "dashed", color = "red")+
+  ylim(0,10)
 
 plot <- p0/p1/p2
 print(plot)
+
 
