@@ -77,13 +77,13 @@ p2<-ggplot(res_df, aes(x = log2FoldChange, y = neg_log10_padj)) +
                      values = c("grey", "#B3CDE3"),
                      labels = c("Not significant","Significant")) +
   theme_minimal() +
-  labs(title = "Volcano Plot (Fold Change ≥ 1.5, padj < 0.01)",
+  labs(title = "Volcano Plot (Fold Change ≥ 1.5, p-value < 0.01)",
        x = "Log2 Fold Change", y = "-log10 Adjusted p-value") +
   geom_hline(yintercept = -log10(padj_threshold_2), linetype = "dashed", color = "red") +
   geom_vline(xintercept = c(-fc_threshold_2, fc_threshold_2), linetype = "dashed", color = "red")+
   ylim(0,10)
 
-plot <- p0/p1/p2
-print(plot)
+#plot <- p0/p1/p2
+#print(plot)
 
 
